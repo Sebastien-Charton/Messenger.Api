@@ -1,8 +1,8 @@
-name: Build
+name: Build Messenger.Api service
 
 on:
   push:
-    branches: [ main ]
+    branches: [ releases/*.* ]
     paths-ignore:
       - '.scripts/**'
       - .gitignore
@@ -10,21 +10,48 @@ on:
       - LICENSE
       - README.md
 
-  workflow_call:
-    inputs:
-      build-artifacts:
-        type: boolean
-        required: true
-        default: false
+permissions: write-all
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
+    env:
+      EXECUTE_TESTS: true
+      BUILD_AND_PUBLISH_DOCKER_IMAGE: true
 
     steps:
-    - uses: actions/checkout@v3
-      name: Checkout code
+
+    - name: Checkout Code
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ github.head_ref }}   # checkout the correct branch name
+        fetch-depth: 0                # fetch the whole repo history
+    
+    - name: Extract and set major and minor version from branch name
+      id: set_major_minor
+      run: |
+        echo "major_minor_version=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
+        echo "major_minor_version=${GITHUB_REF##*/}" >> $GITHUB_ENV
+
+    - name: Output major and minor version
+      run: echo ${{ steps.set_major_minor.outputs.major_minor_version }}
+
+    - name: Generate build number for the current branch
+      uses: onyxmueller/build-tag-number@v1
+      with:
+        token: ${{secrets.github_token}}
+
+    - name: Print build number of the current branch
+      run: echo "Build number is $BUILD_NUMBER"
+
+    - name: Set full version
+      id: set_version
+      run: |
+        echo "version=${{ steps.set_major_minor.outputs.major_minor_version }}.$BUILD_NUMBER" >> $GITHUB_OUTPUT
+        echo "version=${{ steps.set_major_minor.outputs.major_minor_version }}.$BUILD_NUMBER" >> $GITHUB_ENV
+
+    - name: Output full version
+      run: echo ${{ steps.set_version.outputs.version }}
 
     - name: Cache NuGet packages
       uses: actions/cache@v3
@@ -42,40 +69,45 @@ jobs:
 
     - name: Build solution
       run: dotnet build --no-restore --configuration Release
+
+    - name: Install docker
+      uses: docker-practice/actions-setup-docker@master
+    
+    # - name: Run Hello World
+    #   run: |
+    #       set -x
+      
+    #       docker version
+      
+    #       docker run --rm hello-world
       
     - name: Test solution
-      run: dotnet test --no-build --configuration Release --filter "FullyQualifiedName!~AcceptanceTests"
-
-    - name: Publish website
-      if: ${{ inputs.build-artifacts == true }}
-      run: |
-        dotnet publish --configuration Release --runtime win-x86 --self-contained --output ./publish
-        cd publish
-        zip -r ./publish.zip .
-      working-directory: ./src/Web/
-
-    - name: Upload website artifact (website)
-      if: ${{ inputs.build-artifacts == true }}
-      uses: actions/upload-artifact@v3
-      with:
-        name: website
-        path: ./src/Web/publish/publish.zip
-        if-no-files-found: error
+      if: env.EXECUTE_TESTS == 'true'
+      run: dotnet test --no-build --configuration Release
     
-    - name: Create EF Core migrations bundle
-      if: ${{ inputs.build-artifacts == true }}
-      run: |
-        dotnet new tool-manifest
-        dotnet tool install dotnet-ef --version 8.0.0-preview.7.23375.4
-        dotnet ef migrations bundle --configuration Release -p ./src/Infrastructure/ -s ./src/Web/ -o efbundle.exe
-        zip -r ./efbundle.zip efbundle.exe
-      env:
-        SkipNSwag: True
+    # - name: Create EF Core migrations bundle
+    #   if: ${{ inputs.build-artifacts == true }}
+    #   run: |
+    #     dotnet new tool-manifest
+    #     dotnet tool install dotnet-ef --version 8.0.0-preview.7.23375.4
+    #     dotnet ef migrations bundle --configuration Release -p ./src/Infrastructure/ -s ./src/Web/ -o efbundle.exe
+    #     zip -r ./efbundle.zip efbundle.exe
+    #   env:
+    #     SkipNSwag: True
 
-    - name: Upload EF Core migrations bundle artifact (efbundle)
-      if: ${{ inputs.build-artifacts == true }}
-      uses: actions/upload-artifact@v3
-      with:
-        name: efbundle
-        path: ./efbundle.zip
-        if-no-files-found: error
+    # - name: Upload EF Core migrations bundle artifact (efbundle)
+    #   if: ${{ inputs.build-artifacts == true }}
+    #   uses: actions/upload-artifact@v3
+    #   with:
+    #     name: efbundle
+    #     path: ./efbundle.zip
+    #     if-no-files-found: error
+
+    - name: Build and push Docker image
+      if: env.BUILD_AND_PUBLISH_DOCKER_IMAGE == 'true'
+      run: |
+        docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/messenger-api:${{ steps.set_version.outputs.version }} -t ${{ secrets.DOCKER_HUB_USERNAME }}/messenger-api .
+        docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
+        docker push --all-tags ${{ secrets.DOCKER_HUB_USERNAME }}/messenger-api
+    
+
