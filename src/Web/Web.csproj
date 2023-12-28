@@ -28,6 +28,7 @@
     <PackageReference Include="Serilog.Enrichers.Process"/>
     <PackageReference Include="Serilog.Enrichers.Thread"/>
     <PackageReference Include="Serilog.Sinks.Elasticsearch"/>
+    <PackageReference Include="SignalRSwaggerGen" />
     <PackageReference Include="ZymLabs.NSwag.FluentValidation.AspNetCore"/>
   </ItemGroup>
 
