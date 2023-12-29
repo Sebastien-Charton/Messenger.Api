@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using System.Security.Claims;
+using Messenger.Api.Application.Message.Commands.RemoveUserConnectionId;
+using Messenger.Api.Application.Message.Commands.SetUserConnectionId;
+using Microsoft.AspNetCore.SignalR;
 using SignalRSwaggerGen.Attributes;
 
 namespace Messenger.Api.Web.Hubs;
@@ -6,37 +9,27 @@ namespace Messenger.Api.Web.Hubs;
 [SignalRHub]
 public class TestChatHub : Hub
 {
-    // public override async Task OnConnectedAsync()
-    // {
-    //     //get the connection id
-    //     var connectionid = Context.ConnectionId;
-    //     //get the username or userid
-    //     var username = Context.User.Identity.Name;
-    //     var userId = Guid.Parse(Context.User.FindFirstValue(ClaimTypes.NameIdentifier));
-    //
-    //     //insert or updatde them into database.
-    //     var CId = _context.UserIdToCId.Find(userId);
-    //     CId.ConnectionId = connectionid;
-    //     _context.Update(CId);
-    //     await _context.SaveChangesAsync();
-    //     await base.OnConnectedAsync();
-    // }
-    //
-    // public override async Task OnDisconnectedAsync(Exception exception)
-    // {
-    //     //get the connection id
-    //     var connectionid = Context.ConnectionId;
-    //     //get the username or userid
-    //     var username = Context.User.Identity.Name;
-    //     var userId = Guid.Parse(Context.User.FindFirstValue(ClaimTypes.NameIdentifier));
-    //
-    //     //insert or updatde them into database.
-    //     var CId = _context.UserIdToCId.Find(userId);
-    //     CId.ConnectionId = connectionid;
-    //     _context.Update(CId);
-    //     await _context.SaveChangesAsync();
-    //     await base.OnDisconnectedAsync(exception);
-    // }
+    private readonly ISender _sender;
+    public TestChatHub(ISender sender)
+    {
+        _sender = sender;
+    }
+
+    public override async Task OnConnectedAsync()
+    {
+        var connectionId = Context.ConnectionId;
+
+        var setUserConnectionIdCommand = new SetUserConnectionIdCommand() { ConnectionId = connectionId };
+        await _sender.Send(setUserConnectionIdCommand);
+    }
+    
+    public override async Task OnDisconnectedAsync(Exception? exception)
+    {
+        var connectionId = Context.ConnectionId;
+
+        var removeUserConnectionIdCommand = new RemoveUserConnectionIdCommand() { ConnectionId = connectionId };
+        await _sender.Send(removeUserConnectionIdCommand);
+    }
     public async Task SendMessage(string user, string message)
     {
         await Clients.Others.SendAsync("ReceiveMessage", user, message);

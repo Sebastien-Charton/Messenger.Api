@@ -4,6 +4,7 @@ using Messenger.Api.Domain.Constants;
 using Messenger.Api.Infrastructure.Data;
 using Messenger.Api.Infrastructure.Data.Interceptors;
 using Messenger.Api.Infrastructure.Options;
+using Messenger.Api.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -70,6 +71,8 @@ public static class DependencyInjection
             {
                 EndPoints = {redisOptions.Value.ConnectionString}
             }));
+
+        services.AddScoped<ICacheService, CacheService>();
 
         // Authentication
 
