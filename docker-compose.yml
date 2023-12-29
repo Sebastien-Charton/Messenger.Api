@@ -1,8 +1,5 @@
 version: '3.4'
 
 services:
-  messengerdatabase:
-    image: postgres
-
-volumes:
-  postgres_data_messenger_database:
+  messengerapi:
+    image: "sebastiencharton/messengerapi:latest" 

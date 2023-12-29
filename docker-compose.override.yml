@@ -1,14 +1,12 @@
 version: '3.4'
 
 services:
-  messengerdatabase:
-    container_name: messengerdatabase
-    environment:
-      - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=admin1234
-      - POSTGRES_DB=AuthDatabase
+  messengerapi:
+    container_name: messengerapi
+    build:
+      context: .
+      args:
+        - ASPNETCORE_ENVIRONMENT=Development
     restart: always
     ports:
-      - "5101:5432"
-    volumes:
-      - postgres_data_messenger_database:/var/lib/postgresql/data/
+      - "5201:8080"

@@ -18,6 +18,11 @@ FROM build AS publish
 RUN dotnet publish "src/Web/Web.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
+
+ARG ASPNETCORE_ENVIRONMENT
+ENV ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+
 WORKDIR /app
+ENV ASPNETCORE_ENVIRONMENT=Development
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Messenger.Api.dll"]
+ENTRYPOINT ["dotnet", "Messenger.Api.Web.dll"]
