@@ -5,6 +5,7 @@ using Messenger.Api.Infrastructure.Data;
 using Messenger.Api.Web;
 using Messenger.Api.Web.Hubs;
 using Messenger.Api.Web.Infrastructure.Logging;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Localization;
 using Serilog;
 
@@ -89,7 +90,10 @@ app.Map("/", () => Results.Redirect("/api"));
 
 app.MapEndpoints();
 
-app.MapHub<TestChatHub>("/test-chat");
+app.MapHub<TestChatHub>("/test-chat", options =>
+{
+    
+});
 
 app.Run();
 
