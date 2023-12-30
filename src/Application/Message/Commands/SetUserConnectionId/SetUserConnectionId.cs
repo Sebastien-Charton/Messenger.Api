@@ -28,6 +28,6 @@ public class SetUserConnectionIdCommandHandler : IRequestHandler<SetUserConnecti
 
     public async Task Handle(SetUserConnectionIdCommand request, CancellationToken cancellationToken)
     {
-        await _cacheService.SetAsync(request.ConnectionId, _user.Id.ToString()!);
+        await _cacheService.SetAsync(_user.Id.ToString()!,request.ConnectionId );
     }
 }

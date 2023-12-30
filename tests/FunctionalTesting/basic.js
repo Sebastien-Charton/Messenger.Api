@@ -1,50 +1,93 @@
 import ws from 'k6/ws';
 import {check} from 'k6';
 import http from "k6/http";
-import {randomString} from 'https://jslib.k6.io/k6-utils/1.2.0/index.js';
-import {basicOptions, containerEnvName, getAuthApiBaseUrl, getMessengerApiBaseUrl, localEnvName} from "./global-config.js";
+import {
+    basicOptions,
+    containerEnvName,
+    getAuthApiBaseUrl,
+    getMessengerApiBaseUrl,
+    localEnvName,
+    generateEmail,
+    generatePassword,
+    generateUserName
+} from "./global-config.js";
 
 export default function () {
+    // Init vars
 
-    var authApiUrl = getAuthApiBaseUrl(containerEnvName);
+    const authApiUrl = getAuthApiBaseUrl(containerEnvName);
+    const messengerUrl = getMessengerApiBaseUrl(localEnvName);
 
-    // Create user and login
-    let userName = `${randomString(10)}`
-    let email = `${randomString(10)}@example.com`
-    let password = "Password1!,";
+    // Create users
 
-    const createUserPayload = {
-        email: email,
-        password: password,
-        userName: userName
+    const createFirstUserPayload = {
+        email: generateEmail(),
+        password: generatePassword(),
+        userName: generateUserName()
     };
 
-    let createUserResponse = http.post(`${authApiUrl}user/register`, JSON.stringify(createUserPayload), basicOptions);
-
-    // Login user
-
-    const loginUserPayload = {
-        email: email,
-        password: password
+    const createSecondUserPayload = {
+        email: generateEmail(),
+        password: generatePassword(),
+        userName: generateUserName()
     };
 
-    let loginUserResponse = http.post(`${authApiUrl}user/login`, JSON.stringify(loginUserPayload), basicOptions);
+    let createFirstUserResponse = http.post(`${authApiUrl}user/register`, JSON.stringify(createFirstUserPayload), basicOptions);
+    let createSecondUserResponse = http.post(`${authApiUrl}user/register`, JSON.stringify(createSecondUserPayload), basicOptions);
 
-    let authToken = JSON.parse(loginUserResponse.body).token;
+    // Login users
 
-    console.log(authToken);
+    const loginFirstUserPayload = {
+        email: createFirstUserPayload.email,
+        password: createFirstUserPayload.password
+    };
+
+    const loginSecondUserPayload = {
+        email: createSecondUserPayload.email,
+        password: createSecondUserPayload.password
+    };
+
+    let loginFirstUserResponse = http.post(`${authApiUrl}user/login`, JSON.stringify(loginFirstUserPayload), basicOptions);
+    let loginSecondUserResponse = http.post(`${authApiUrl}user/login`, JSON.stringify(loginSecondUserPayload), basicOptions);
+
+    // Get auth token
+
+    let firstUserAuthToken = JSON.parse(loginFirstUserResponse.body).token;
+    let secondUserAuthToken = JSON.parse(loginSecondUserResponse.body).token;
+    let firstUserId = JSON.parse(loginFirstUserResponse.body).userId;
+    let secondUserId = JSON.parse(loginSecondUserResponse.body).userId;
+
     // Send message
-    let messengerUrl = getMessengerApiBaseUrl(localEnvName);
 
+    const firstSocketUrl = `wss://${messengerUrl}/test-chat?access_token=${firstUserAuthToken}`;
+    const secondSocketUrl = `wss://${messengerUrl}/test-chat?access_token=${secondUserAuthToken}`;
+
+    createFirstSocket(secondUserId, firstUserId, firstSocketUrl);
+
+    const wsResponse = ws.connect(secondSocketUrl, socket => {
+        socket.on('open', () => {
+            // ESSENTIAL
+            // from: https://stackoverflow.com/a/76677753
+            socket.send(JSON.stringify({protocol: 'json', version: 1}) + '\x1e')
+        });
+
+        socket.on('message', (data) => {
+            console.log(`Received message for user 2: ${data}`);
+        });
+    });
+
+
+    check(wsResponse, {'Status is 101': (r) => r && r.status === 101});
+}
+
+async function createFirstSocket(secondUserId, firstUserId, firstSocketUrl) {
     var message = {
-        "arguments": ["sebastien", "Hello world"],
-        "target": "sendmessage",
+        "arguments": [secondUserId, `Hello world send by first user ${firstUserId} to second user ${secondUserId}`],
+        "target": "SendMessageToSpecificUser",
         "type": 1
     };
 
-    const socketUrl = `wss://${messengerUrl}/test-chat?access_token=${authToken}`;
-
-    const wsResponse = ws.connect(socketUrl, socket => {
+    const wsResponse = ws.connect(firstSocketUrl, socket => {
         socket.on('open', () => {
             // ESSENTIAL
             // from: https://stackoverflow.com/a/76677753
@@ -56,12 +99,7 @@ export default function () {
         }, 1000);
 
         socket.on('message', (data) => {
-            // data example: [{field1: "value 1"}]
-            // const msg = JSON.parse(data) // backend returns objects as string
-
-            console.log(data);
+            console.log(`Received message for user 1: ${data}`);
         });
     });
-
-    check(wsResponse, {'Status is 101': (r) => r && r.status === 101});
 }

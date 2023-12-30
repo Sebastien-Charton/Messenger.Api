@@ -1,3 +1,4 @@
+import { randomString } from 'https://jslib.k6.io/k6-utils/1.2.0/index.js';
 export function getAuthApiBaseUrl(environment){
     switch (environment) {
         case 'local':
@@ -26,6 +27,18 @@ export let basicOptions = {
 export function addAuthorizationToHeaders(authToken){
     basicOptions.headers.Authorization = `Bearer ${authToken}`;
     return basicOptions;
+}
+
+export function generateUserName(){
+    return `${randomString(10)}`;
+}
+
+export function generateEmail(){
+    return `${randomString(10)}@example.com`;
+}
+
+export function generatePassword(){
+    return "Password1!,";
 }
 
 export const localEnvName = 'local';

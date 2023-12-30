@@ -19,14 +19,15 @@ public class RemoveUserConnectionIdCommandValidator : AbstractValidator<RemoveUs
 public class RemoveUserConnectionIdCommandHandler : IRequestHandler<RemoveUserConnectionIdCommand>
 {
     private readonly ICacheService _cacheService;
-
-    public RemoveUserConnectionIdCommandHandler(ICacheService cacheService)
+    private readonly IUser _user;
+    public RemoveUserConnectionIdCommandHandler(ICacheService cacheService, IUser user)
     {
         _cacheService = cacheService;
+        _user = user;
     }
 
     public async Task Handle(RemoveUserConnectionIdCommand request, CancellationToken cancellationToken)
     {
-        await _cacheService.RemoveAsync(request.ConnectionId);
+        await _cacheService.RemoveAsync(_user.Id.ToString()!);
     }
 }

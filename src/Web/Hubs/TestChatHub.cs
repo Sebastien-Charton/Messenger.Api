@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Messenger.Api.Application.Message.Commands.RemoveUserConnectionId;
 using Messenger.Api.Application.Message.Commands.SetUserConnectionId;
+using Messenger.Api.Application.Message.Queries.GetUserConnectionId;
 using Messenger.Api.Domain.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
@@ -42,9 +43,12 @@ public class TestChatHub : Hub
     }
     
     [Authorize(Policy = Policies.AllUsers)]
-    public async Task SendMessageToSpecificUser(string user, string message)
+    public async Task SendMessageToSpecificUser(string receiverUserId, string message)
     {
-        await Clients.User(user).SendAsync("ReceiveMessage", user, message);
+        var getConnectionIdQuery = new GetUserConnectionIdQuery() { UserId = receiverUserId };
+        var connectionId = await _sender.Send(getConnectionIdQuery);
+        
+        if(connectionId is not null)
+            await Clients.User(connectionId).SendAsync("SpecificUserMessage", message);
     }
-    
 }

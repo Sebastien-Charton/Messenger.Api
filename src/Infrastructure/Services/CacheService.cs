@@ -12,9 +12,11 @@ public class CacheService : ICacheService
         _redis = redis;
     }
     
-    public async Task GetAsync(string key)
+    public async Task<string?> GetAsync(string key)
     {
-        await _redis.GetDatabase().StringGetAsync(key);
+        var result = await _redis.GetDatabase().StringGetAsync(key);
+        // retrieve value from RedisValue object
+        return result.HasValue ? result.ToString() : null;
     }
     
     public async Task SetAsync(string key, string value, TimeSpan? timeToLive = null)
