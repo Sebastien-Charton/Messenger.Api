@@ -1,0 +1,218 @@
+POST http://localhost:5200/api/user/login
+Content-Type: application/json
+Accept-Language: en-US
+Content-Length: 62
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.9)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "password": "Password1!",
+  "email": "user2@example.com"
+}
+
+<> 2023-12-30T125419-1.200.json
+
+###
+
+POST http://localhost:5200/api/user/login
+Content-Type: application/json
+Accept-Language: en-US
+Content-Length: 62
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.9)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "password": "Password1!",
+  "email": "user1@example.com"
+}
+
+<> 2023-12-30T125419.200.json
+
+###
+
+POST http://localhost:5200/api/user/login
+Content-Type: application/json
+Accept-Language: en-US
+Content-Length: 62
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.9)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "password": "Password1!",
+  "email": "user2@example.com"
+}
+
+<> 2023-12-30T125030-1.200.json
+
+###
+
+POST http://localhost:5200/api/user/login
+Content-Type: application/json
+Accept-Language: en-US
+Content-Length: 62
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.9)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "password": "Password1!",
+  "email": "user1@example.com"
+}
+
+<> 2023-12-30T125030.200.json
+
+###
+
+POST http://localhost:5200/api/user/login
+Accept: application/json
+Accept-Language: en-US
+Content-Length: 62
+Content-Type: */*; charset=UTF-8
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.9)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "password": "Password1!",
+  "email": "user2@example.com"
+}
+
+###
+
+POST http://localhost:5200/api/user/login
+Accept: application/json
+Accept-Language: en-US
+Content-Length: 62
+Content-Type: */*; charset=UTF-8
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.9)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "password": "Password1!",
+  "email": "user1@example.com"
+}
+
+###
+
+POST http://localhost:5200/api/user/login
+Accept: application/json
+Accept-Language: en-US
+Content-Length: 62
+Content-Type: */*; charset=UTF-8
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.9)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "password": "Password1!",
+  "email": "user2@example.com"
+}
+
+###
+
+POST http://localhost:5200/api/user/login
+Accept: application/json
+Accept-Language: en-US
+Content-Length: 62
+Content-Type: */*; charset=UTF-8
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.9)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "password": "Password1!",
+  "email": "user1@example.com"
+}
+
+###
+
+POST http://localhost:5200/api/user/login
+Accept: application/json
+Accept-Language: en-US
+Content-Length: 62
+Content-Type: */*; charset=UTF-8
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.9)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "password": "Password1!",
+  "email": "user2@example.com"
+}
+
+###
+
+POST http://localhost:5200/api/user/login
+Accept: application/json
+Accept-Language: en-US
+Content-Length: 62
+Content-Type: */*; charset=UTF-8
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.9)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "password": "Password1!",
+  "email": "user1@example.com"
+}
+
+###
+
+POST http://localhost:5200/api/user/register
+Content-Type: application/json
+Accept-Language: en-US
+Content-Length: 85
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.9)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "username": "user2",
+  "password": "Password1!",
+  "email": "user2@example.com"
+}
+
+<> 2023-12-30T124251.201.json
+
+###
+
+POST http://localhost:5200/api/user/register
+Content-Type: application/json
+Accept-Language: en-US
+Content-Length: 85
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.9)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "username": "user1",
+  "password": "Password1!",
+  "email": "user1@example.com"
+}
+
+<> 2023-12-30T124251.400.json
+
+###
+
+POST http://localhost:5200/api/user/register
+Content-Type: application/json
+Accept-Language: en-US
+Content-Length: 85
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.9)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "username": "user1",
+  "password": "Password1!",
+  "email": "user1@example.com"
+}
+
+<> 2023-12-30T123904.201.json
+
+###
+

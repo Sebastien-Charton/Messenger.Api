@@ -49,6 +49,6 @@ public class TestChatHub : Hub
         var connectionId = await _sender.Send(getConnectionIdQuery);
         
         if(connectionId is not null)
-            await Clients.User(connectionId).SendAsync("SpecificUserMessage", message);
+            await Clients.Client(connectionId).SendAsync("SpecificUserMessage", message);
     }
 }

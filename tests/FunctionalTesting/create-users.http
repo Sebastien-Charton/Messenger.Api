@@ -1,0 +1,23 @@
+### Create first user
+
+POST {{auth_api_url}}/user/register
+Content-Type: application/json
+Accept-Language: en-US
+
+{
+  "username": "user1",
+  "password": "Password1!",
+  "email": "user1@example.com"
+}
+
+### Create second user
+
+POST {{auth_api_url}}/user/register
+Content-Type: application/json
+Accept-Language: en-US
+
+{
+  "username": "user2",
+  "password": "Password1!",
+  "email": "user2@example.com"
+}

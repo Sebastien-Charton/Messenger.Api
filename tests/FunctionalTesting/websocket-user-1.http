@@ -1,0 +1,57 @@
+// Login User 1
+
+POST {{auth_api_url}}user/login
+Content-Type: application/json
+Accept-Language: en-US
+
+{
+  "password": "Password1!",
+  "email": "user1@example.com"
+}
+
+> {%
+    client.global.set("user_id_1", response.body.userId);
+    client.global.set("user_token_1", response.body.token);
+%}
+
+###
+
+// Login User 2
+
+POST {{auth_api_url}}user/login
+Content-Type: application/json
+Accept-Language: en-US
+
+{
+  "password": "Password1!",
+  "email": "user2@example.com"
+}
+
+> {%
+    client.global.set("user_id_2", response.body.userId);
+    client.global.set("user_token_2", response.body.token);
+%}
+
+###
+
+// Create a new chat for user 1
+WEBSOCKET wss://{{messenger_hub_url}}/test-chat?access_token={{user_token_1}}
+Content-Type: application/json // used only for IDE highlighting.
+// Highlighting is applied for each message independently.
+
+
+{
+  "protocol": "json",
+    "version": 1
+}
+=== wait-for-server
+{
+  "message": "Wait for the server message and send the current message as response"
+}
+===
+{
+  "message": "Send after previous message without waiting for the server message"
+}
+
+
+
