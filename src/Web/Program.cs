@@ -3,7 +3,9 @@ using Messenger.Api.Application;
 using Messenger.Api.Infrastructure;
 using Messenger.Api.Infrastructure.Data;
 using Messenger.Api.Web;
+using Messenger.Api.Web.Hubs;
 using Messenger.Api.Web.Infrastructure.Logging;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Localization;
 using Serilog;
 
@@ -41,6 +43,13 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     options.SupportedCultures = supportedCultures;
     options.SupportedUICultures = supportedCultures;
 });
+
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSignalRSwaggerGen();
+});
+
+builder.Services.AddSignalR();
 
 WebApplication app = builder.Build();
 
@@ -80,6 +89,11 @@ app.UseExceptionHandler(options => { });
 app.Map("/", () => Results.Redirect("/api"));
 
 app.MapEndpoints();
+
+app.MapHub<TestChatHub>("/test-chat", options =>
+{
+    
+});
 
 app.Run();
 

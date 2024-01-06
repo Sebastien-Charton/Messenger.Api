@@ -28,6 +28,7 @@
     <PackageReference Include="Serilog.Enrichers.Process"/>
     <PackageReference Include="Serilog.Enrichers.Thread"/>
     <PackageReference Include="Serilog.Sinks.Elasticsearch"/>
+    <PackageReference Include="SignalRSwaggerGen" />
     <PackageReference Include="ZymLabs.NSwag.FluentValidation.AspNetCore"/>
   </ItemGroup>
 
@@ -41,18 +42,27 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="appsettings.Development.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="appsettings.Build.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
   <!-- Auto-generated Open API specification and Angular TypeScript clients -->
   <PropertyGroup>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
 
-  <Target Name="NSwag" AfterTargets="PostBuildEvent" Condition=" '$(Configuration)' == 'Debug' And '$(SkipNSwag)' != 'True' ">
-    <Exec ConsoleToMSBuild="true" ContinueOnError="true" WorkingDirectory="$(ProjectDir)" EnvironmentVariables="ASPNETCORE_ENVIRONMENT=Build" Command="$(NSwagExe_Net70) run config.nswag /variables:Configuration=$(Configuration)">
-      <Output TaskParameter="ExitCode" PropertyName="NSwagExitCode"/>
-      <Output TaskParameter="ConsoleOutput" PropertyName="NSwagOutput"/>
-    </Exec>
+<!--  <Target Name="NSwag" AfterTargets="PostBuildEvent" Condition=" '$(Configuration)' == 'Debug' And '$(SkipNSwag)' != 'True' ">-->
+<!--    <Exec ConsoleToMSBuild="true" ContinueOnError="true" WorkingDirectory="$(ProjectDir)" EnvironmentVariables="ASPNETCORE_ENVIRONMENT=Build" Command="$(NSwagExe_Net70) run config.nswag /variables:Configuration=$(Configuration)">-->
+<!--      <Output TaskParameter="ExitCode" PropertyName="NSwagExitCode"/>-->
+<!--      <Output TaskParameter="ConsoleOutput" PropertyName="NSwagOutput"/>-->
+<!--    </Exec>-->
 
-    <Message Text="$(NSwagOutput)" Condition="'$(NSwagExitCode)' == '0'" Importance="low"/>
-    <Error Text="$(NSwagOutput)" Condition="'$(NSwagExitCode)' != '0'"/>
-  </Target>
+<!--    <Message Text="$(NSwagOutput)" Condition="'$(NSwagExitCode)' == '0'" Importance="low"/>-->
+<!--    <Error Text="$(NSwagOutput)" Condition="'$(NSwagExitCode)' != '0'"/>-->
+<!--  </Target>-->
 </Project>
